@@ -13,7 +13,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD9h6vVwwJO8fRtf2iWLgt4xQWB9cgOXIc"/>
+            android:value="${googleMapsApiKey}"/>
 
         <activity android:name=".activity.LoginActivity" android:exported="true">
             <intent-filter>
