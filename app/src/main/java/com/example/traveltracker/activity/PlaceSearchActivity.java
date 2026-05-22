@@ -1,5 +1,6 @@
 package com.example.traveltracker.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -46,12 +47,24 @@ public class PlaceSearchActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // 장소 카드 클릭 → PlaceDetailActivity로 이동
+
+        // isPickingMode: 게시물 작성 시 장소 첨부용으로 진입할 때 true
+        // true이면 클릭 시 선택한 장소 이름/주소를 결과로 반환, false이면 PlaceDetailActivity로 이동
+        boolean isPickingMode = getIntent().getBooleanExtra("isPickingMode", false);
         adapter = new PlaceAdapter(this, new ArrayList<>(), place -> {
-            Intent intent = new Intent(this, PlaceDetailActivity.class);
-            intent.putExtra("place_id", place.get("place_id"));
-            intent.putExtra("place_name", place.get("name"));
-            startActivity(intent);
+            if (isPickingMode) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("selectedPlaceName", place.get("name"));
+                String address = place.containsKey("address") ? place.get("address") : "주소 정보 없음";
+                resultIntent.putExtra("selectedPlaceAddress", address);
+                setResult(Activity.RESULT_OK, resultIntent);
+                finish();
+            } else {
+                Intent intent = new Intent(this, PlaceDetailActivity.class);
+                intent.putExtra("place_id", place.get("place_id"));
+                intent.putExtra("place_name", place.get("name"));
+                startActivity(intent);
+            }
         });
         recyclerView.setAdapter(adapter);
 
